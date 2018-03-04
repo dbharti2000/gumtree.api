@@ -3,13 +3,16 @@ package gumtree.api.stepdefs;
 import static gumtree.api.RestClient.response;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
+import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import gumtree.api.RestClient;
 import gumtree.api.utils.Utility;
 import java.io.IOException;
+import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 
 public class GumTreeApiTestStepDefs {
@@ -17,6 +20,7 @@ public class GumTreeApiTestStepDefs {
 
   public static int userId;
   private static String randomString;
+  private static Logger LOG = LogManager.getLogger(GumTreeApiTestStepDefs.class);
 
   private static String emailDomain = "@gmail.com";
   private static String BASE_URL = "https://jsonplaceholder.typicode.com";
@@ -30,7 +34,7 @@ public class GumTreeApiTestStepDefs {
     randomString = util.generateRandomString();
 
     String email = randomString + userId + emailDomain;
-    System.out.println("Email of newly created user :" + email);
+    LOG.info("Email of newly created user :" + email);
   }
 
   @Given("^I set the (\\w+) api URL$")
@@ -55,6 +59,7 @@ public class GumTreeApiTestStepDefs {
 
   @Then("^status code should be (\\d+)$")
   public void api_should_return_status_code(int expectedStatusCode) {
+    LOG.info(" \n Status Code: " + response.getStatusCode());
     assertThat(response.getStatusCode(), equalTo(expectedStatusCode));
   }
 
@@ -71,4 +76,22 @@ public class GumTreeApiTestStepDefs {
         && userIdInResponse <= upperLevel);
   }
 
+  @When("^I add the body for POST call$")
+  public void send_data() {
+    restClient.setRequestBody(
+        "{\"title\":\"TestTitle\",\"body\":\"TestBody\",\"userId\": " + this.userId + " }");
+  }
+
+  @Then("^response should contain below items:$")
+  public void response_contains(DataTable dataTable) {
+    for (Map<String, String> userData : dataTable.asMaps(String.class, String.class)) {
+      Assert.assertTrue("Expected Value does not exist in response",
+          Integer.parseInt(restClient.getValueFromJsonResponse("userId")) == userId);
+      Assert.assertTrue("Expected Value does not exist in response",
+          restClient.getValueFromJsonResponse("body").equalsIgnoreCase(userData.get("body")));
+      Assert.assertTrue("Expected Value does not exist in response",
+          restClient.getValueFromJsonResponse("title").equalsIgnoreCase(userData.get("title")));
+    }
+
+  }
 }
