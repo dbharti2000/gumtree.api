@@ -5,7 +5,7 @@ I've developed a cucumber + rest-assured test which covers below :
 - Make a GET request to api
 - Validate status code and response contains newly generated id and id is in between 1 and 100
 - Make a POST request
-- Validate Status Code 201 and response returned
+- Validate Status Code 201 and returned response
 
 ### Prerequisites
 - Language - Java 1.8
@@ -19,6 +19,7 @@ I've developed a cucumber + rest-assured test which covers below :
 - Clone the repository or download project as a zip file
 - Download all the required libraries
 - Run the tests using RunTest class
+- Reports and Log file have been checked in as well as a execution proof
 
 OR
 
