@@ -1,16 +1,23 @@
 package gumtree.api.stepdefs;
 
+import static gumtree.api.RestClient.response;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import gumtree.api.RestClient;
 import gumtree.api.utils.Utility;
 import java.io.IOException;
+import org.junit.Assert;
 
 public class GumTreeApiTestStepDefs {
 
 
   public static int userId;
   private static String randomString;
+
   private static String emailDomain = "@gmail.com";
   private static String BASE_URL = "https://jsonplaceholder.typicode.com";
 
@@ -46,5 +53,22 @@ public class GumTreeApiTestStepDefs {
     }
   }
 
+  @Then("^status code should be (\\d+)$")
+  public void api_should_return_status_code(int expectedStatusCode) {
+    assertThat(response.getStatusCode(), equalTo(expectedStatusCode));
+  }
+
+  @Then("^response should contain newly generated id$")
+  public void response_should_have_new_id() {
+    int idInResponse = Integer.parseInt(restClient.getValueFromJsonResponse("id"));
+    Assert.assertTrue("Ids don't match", idInResponse == userId);
+  }
+
+  @Then("^id in the the response should be between (\\d+) and (\\d+)")
+  public void response_should_have_new_id(int lowerLevel, int upperLevel) {
+    int userIdInResponse = Integer.parseInt(restClient.getValueFromJsonResponse("userId"));
+    Assert.assertTrue("Ids don't match", userIdInResponse >= lowerLevel
+        && userIdInResponse <= upperLevel);
+  }
 
 }

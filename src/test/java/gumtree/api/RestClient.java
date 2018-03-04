@@ -2,6 +2,7 @@ package gumtree.api;
 
 import static com.jayway.restassured.RestAssured.given;
 
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Map;
 public class RestClient {
 
 
-  static Response response;
+  public static Response response;
   private static String requestURL = "";
   private static Map<String, String> requestHeaders = new HashMap<String, String>();
   private static String requestBody = "";
@@ -20,16 +21,13 @@ public class RestClient {
   }
 
   public void setRequestBody(String body) {
-
     requestBody = body;
   }
 
   public void performGetRequest() {
     response = given().log().all().headers(requestHeaders)
         .expect().get(requestURL);
-
     responseString = response.asString();
-
   }
 
   public String getResponseAsString() {
@@ -43,15 +41,18 @@ public class RestClient {
   public void setContentType(String contentType) {
     requestHeaders.put("Accept", contentType);
     requestHeaders.put("Content-Type", contentType);
-
   }
 
   public void performPostRequest() {
     response = given().log().all().headers(requestHeaders).body(requestBody)
         .expect().post(requestURL);
-
     responseString = response.asString();
+  }
 
+  public String getValueFromJsonResponse(String keyName) {
+    String jsonString = responseString;
+    JsonPath path = new JsonPath(jsonString);
+    return path.getString(keyName);
   }
 
 }
