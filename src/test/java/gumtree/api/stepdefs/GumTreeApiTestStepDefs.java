@@ -1,6 +1,7 @@
 package gumtree.api.stepdefs;
 
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.When;
 import gumtree.api.RestClient;
 import gumtree.api.utils.Utility;
 import java.io.IOException;
@@ -35,5 +36,15 @@ public class GumTreeApiTestStepDefs {
 
     restClient.setContentType("application/json");
   }
+
+  @When("^I make a (\\w+) request to api$")
+  public void send_the_post_request(String httpMethod) {
+    if (httpMethod.equalsIgnoreCase("GET")) {
+      restClient.performGetRequest();
+    } else if ((httpMethod.equalsIgnoreCase("POST"))) {
+      restClient.performPostRequest();
+    }
+  }
+
 
 }

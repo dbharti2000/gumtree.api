@@ -32,7 +32,6 @@ public class RestClient {
 
   }
 
-
   public String getResponseAsString() {
     return responseString;
   }
@@ -46,4 +45,13 @@ public class RestClient {
     requestHeaders.put("Content-Type", contentType);
 
   }
+
+  public void performPostRequest() {
+    response = given().log().all().headers(requestHeaders).body(requestBody)
+        .expect().post(requestURL);
+
+    responseString = response.asString();
+
+  }
+
 }
